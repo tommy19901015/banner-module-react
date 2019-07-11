@@ -12,7 +12,8 @@ class Banner extends React.Component {
   state = {
     isOpen: true, // [boolean] true | false
     nowState: "opened", // [String] closed | closing | opened | opening
-    autoToggleTime: "", //[number] 3000
+    autoToggleTime: "", //[number] 3000,
+    nowBtnText:"收合", //[String] 收合 | 展開
     //-------------------------------------------------------------
     openAtStart: true, // [boolean] true | false
     // 設定啟動後是否要自動開或合，若設為false，就不要自勳開合；若為true是馬上自動開合；若為數字是幾毫秒之後開合
@@ -23,7 +24,7 @@ class Banner extends React.Component {
       openText: "展開", // [string]
       class: "btn" // [string]
     },
-    buttonName: "btn",
+    // buttonName: "btn",
     // 設定模組在各狀態時的class
     bannerClass: {
       closed: "closed", // [string]
@@ -50,8 +51,10 @@ class Banner extends React.Component {
     if( typeof openAtStart === "boolean"){
       if(openAtStart){
         this.transitionStart(openedStatus)
+        this.setState({nowBtnText:this.state.button.closeText})
       }else{
         this.transitionStart(closedStatus);
+        this.setState({nowBtnText:this.state.button.openText})
       }
     }
 
@@ -77,13 +80,16 @@ class Banner extends React.Component {
   }
 
   handleClick = () => {
-    this.state.nowState === openedStatus ||
-    this.state.nowState === openingStatus
+    const {isOpen,button,nowState} = this.state;
+    nowState === openedStatus ||
+    nowState === openingStatus
       ? this.transitionStart(closingStatus)
       : this.transitionStart(openingStatus);
     this.setInterval();
     this.setState({
-      isOpen: !this.state.isOpen
+      isOpen: !isOpen,
+      nowBtnText:isOpen ? this.state.nowBtnText = button.closeText :
+      this.state.nowBtnText = button.openText  
     });
   };
 
@@ -125,9 +131,9 @@ class Banner extends React.Component {
       isOpen,
       button,
       nowState,
+      nowBtnText,
       bannerClass,
       transitionClass,
-      buttonName
     } = this.state;
     return (
       <div
@@ -138,8 +144,7 @@ class Banner extends React.Component {
           <img className="img" src={imgUrl} />
         </a>
         <button className="btn" onClick={this.handleClick}>
-          {buttonName}
-          {/* {isOpen ? button.closeText : button.openText} */}
+          {nowBtnText}
         </button>
       </div>
     );
